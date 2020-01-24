@@ -1,58 +1,155 @@
-## Project: Build a Traffic Sign Recognition Program
-[![Udacity - Self-Driving Car NanoDegree](https://s3.amazonaws.com/udacity-sdc/github/shield-carnd.svg)](http://www.udacity.com/drive)
+# **Traffic Sign Recognition** 
 
-Overview
+## A Simple CNN Architecture inspired from Le-Net 5 
+
 ---
-In this project, you will use what you've learned about deep neural networks and convolutional neural networks to classify traffic signs. You will train and validate a model so it can classify traffic sign images using the [German Traffic Sign Dataset](http://benchmark.ini.rub.de/?section=gtsrb&subsection=dataset). After the model is trained, you will then try out your model on images of German traffic signs that you find on the web.
 
-We have included an Ipython notebook that contains further instructions 
-and starter code. Be sure to download the [Ipython notebook](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/Traffic_Sign_Classifier.ipynb). 
+**Build a Traffic Sign Recognition Project**
 
-We also want you to create a detailed writeup of the project. Check out the [writeup template](https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project/blob/master/writeup_template.md) for this project and use it as a starting point for creating your own writeup. The writeup can be either a markdown file or a pdf document.
-
-To meet specifications, the project will require submitting three files: 
-* the Ipython notebook with the code
-* the code exported as an html file
-* a writeup report either as a markdown or pdf file 
-
-Creating a Great Writeup
----
-A great writeup should include the [rubric points](https://review.udacity.com/#!/rubrics/481/view) as well as your description of how you addressed each point.  You should include a detailed description of the code used in each step (with line-number references and code snippets where necessary), and links to other supporting documents or external references.  You should include images in your writeup to demonstrate how your code works with examples.  
-
-All that said, please be concise!  We're not looking for you to write a book here, just a brief description of how you passed each rubric point, and references to the relevant code :). 
-
-You're not required to use markdown for your writeup.  If you use another method please just submit a pdf of your writeup.
-
-The Project
----
 The goals / steps of this project are the following:
-* Load the data set
+* Load the data set (see below for links to the project data set)
 * Explore, summarize and visualize the data set
 * Design, train and test a model architecture
 * Use the model to make predictions on new images
 * Analyze the softmax probabilities of the new images
 * Summarize the results with a written report
 
-### Dependencies
-This lab requires:
 
-* [CarND Term1 Starter Kit](https://github.com/udacity/CarND-Term1-Starter-Kit)
+[//]: # (Image References)
 
-The lab environment can be created with CarND Term1 Starter Kit. Click [here](https://github.com/udacity/CarND-Term1-Starter-Kit/blob/master/README.md) for the details.
+[image1]: ./assets/hist.png "Histogram"
+[image2]: ./assets/0.png "0"
+[image3]: ./assets/1.png "1"
+[image4]: ./assets/2.png "2"
+[image5]: ./assets/3.png "3"
+[image6]: ./assets/4.png "4"
+[image7]: ./assets/5.png "5"
+[image8]: ./assets/gray.png "Gray"
+[image9]: ./web/20speed.jpg "20speed"
+[image10]: ./web/animalscrossing.jpg "Animals Crossing"
+[image11]: ./web/keepright.jpg "Keep Right"
+[image12]: ./web/nopassing.jpg "No Passing"
+[image13]: ./web/roadwork.jpg "Road Work"
+[image14]: ./web/stop.jpg "Stop"
+[image15]: ./web/yield.jpg "Yield"
 
-### Dataset and Repository
 
-1. Download the data set. The classroom has a link to the data set in the "Project Instructions" content. This is a pickled dataset in which we've already resized the images to 32x32. It contains a training, validation and test set.
-2. Clone the project, which contains the Ipython notebook and the writeup template.
-```sh
-git clone https://github.com/udacity/CarND-Traffic-Sign-Classifier-Project
-cd CarND-Traffic-Sign-Classifier-Project
-jupyter notebook Traffic_Sign_Classifier.ipynb
-```
+---
 
-### Requirements for Submission
-Follow the instructions in the `Traffic_Sign_Classifier.ipynb` notebook and write the project report using the writeup template as a guide, `writeup_template.md`. Submit the project code and writeup document.
+### Data Set Summary & Exploration
 
-## How to write a README
-A well written README file can enhance your project and portfolio.  Develop your abilities to create professional README files by completing [this free course](https://www.udacity.com/course/writing-readmes--ud777).
+#### 1. Summary of Data
+
+I used the numpy library to calculate summary statistics of the traffic
+signs data set:
+
+* The size of training set is 34799
+* The size of the validation set is 4410
+* The size of test set is 12630
+* The shape of a traffic sign image is 32,32,3
+* The number of unique classes/labels in the data set is 43
+
+#### 2. Visualization of Dataset
+
+A visualization of the frequency of samples per class in the Training dataset can be seen below.
+
+![alt text][image1]
+
+Some samples from the dataset can be seen below.
+
+![alt text][image2]
+![alt text][image3]
+![alt text][image4]
+![alt text][image5]
+![alt text][image6]
+![alt text][image7]
+
+### Design and Test a Model Architecture
+
+#### 1.Data Preprocessing
+
+As a first step, I decided to convert the images to grayscale because it reeduces the number of channels which reduces the training time. 
+
+Here is an example of a traffic sign image after grayscaling.
+
+![alt text][image8]
+
+I also normalised the pixel values by subtracting 125 and dividing by 125. This restraints them to be in the range of -1 to +1. This makes sure that while backpropogation, the gradients don't blow up.
+
+
+#### 2. Final Model
+
+My final model consisted of the following layers:
+
+| Layer         		|     Description	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Input         		| 32x32x1 Grayscale image   					| 
+| Convolution 5x5     	| 1x1 stride, same padding, outputs 28x28x6 	|
+| RELU					|												|
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 24x24x12 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride,  outputs 12x12x12 				|
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 8x8x24 	|
+| RELU					|												|
+| Convolution 5x5     	| 1x1 stride, valid padding, outputs 4x4x24 	|
+| RELU					|												|
+| Max pooling	      	| 2x2 stride,  outputs 2x2x24 					|
+| Flatten				| 												|
+| Dense					| outputs 240 									|
+| RELU					|												|
+| Dropout				|Keep_prob 0.7									|
+| Dense					| outputs 240 									|
+| RELU					|												|
+| Dropout				|Keep_prob 0.7									|
+| Dense					| outputs 120 									|
+| RELU					|												|
+| Dropout				|Keep_prob 0.7									|
+| Dense					| outputs 43 									|
+
+
+#### 3. Training the model
+
+To train the model, I used the Adam Optimizer with a learning rate of 0.001 which I ran for a total of 25 epochs with a batch size of 128. As this was a multi-class classification, I used the Cross Entropy function as my loss function.
+
+#### 4. Analysis of the model
+
+My final model results were:
+* training set accuracy of 99.0%
+* validation set accuracy of 95.1% 
+* test set accuracy of 92.3% over
+
+Initially I tried the vanilla LeNet-5 but even for a small data, the model was not overfitting which indicated that a more complex network was required. After increasing the number of Convolution and Dense layers, the training accuracy was almost hitting 99% which indicated Overfitting. Hence I used Dropout layers after all the Dense layers with a dropout probability of 0.3. This increased the validation accuracy drastically.
+
+
+### Test a Model on New Images
+
+Here are five German traffic signs that I found on the web:
+
+![alt text][image9] ![alt text][image12] ![alt text][image13] ![alt text][image15] 
+![alt text][image10] ![alt text][image11] ![alt text][image14] 
+
+Here are the results of the prediction:
+
+| Image			        |     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| Speed Limit (20km/h)	| Speed Limit (20km/h)							| 
+| Wild Animals Crossing	| Wild Animals Crossing							|
+| Keep Right			| Keep Right									|
+| No Passing      		| Children Crossing				 				|
+| Road Work 			| Road Work          							|
+| Stop      			| Stop         									|
+| Yield      			| Yield        									|
+
+
+The model was able to correctly guess 6 of the 7 traffic signs, which gives an accuracy of 85.6%. These images are taken randomly from the internet.
+
+For the fourth image, the model is relatively sure that this is a End of No Passing sign (probability of 0.6), and the image does not contain a stop sign but No Passing sign. The top five soft max probabilities were
+
+| Probability         	|     Prediction	        					| 
+|:---------------------:|:---------------------------------------------:| 
+| .843         			| Children Crossing								| 
+| .107     				| Right-of-way at the next intersection			|
+| .003					| Vehicles over 3.5 metric tons prohibited		|
+| .0005	      			| Slippery road					 				|
+| .0004				    | No Passing         							|
 
